@@ -44,3 +44,34 @@ def test_theme_update(app_client):
     new_content = css_path.read_text()
     assert '#000000' in new_content
     assert original != new_content
+
+
+def test_upload_log_display(app_client):
+    client, _, csv_log, _ = app_client
+    login(client)
+
+    import csv
+    with open(csv_log, 'w', newline='') as f:
+        writer = csv.DictWriter(
+            f,
+            fieldnames=[
+                'Date', 'Designer', 'Client Name', 'Email',
+                'Contact', 'Instructions', 'Files'
+            ],
+        )
+        writer.writeheader()
+        writer.writerow({
+            'Date': '2024-01-01',
+            'Designer': 'Andrew',
+            'Client Name': 'Tester',
+            'Email': 't@example.com',
+            'Contact': '123',
+            'Instructions': 'hi',
+            'Files': 'file1.txt',
+        })
+
+    resp = client.get('/admin')
+    assert resp.status_code == 200
+    html = resp.data.decode()
+    assert 'file1.txt' in html
+    assert 'Tester' in html
