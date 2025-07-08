@@ -54,7 +54,6 @@ Install the dependencies and run the test suite with **pytest**:
 pip install -r requirements.txt pytest
 pytest
 ```
-
 ## 📌 Managing Dependencies
 
 All Python packages in `requirements.txt` use pinned versions. To update them:
@@ -62,3 +61,8 @@ All Python packages in `requirements.txt` use pinned versions. To update them:
 1. Create a fresh virtual environment and install the project.
 2. Run `pip freeze > requirements.txt` to capture working versions.
 3. Commit the updated file so builds remain reproducible.
+=======
+## License
+
+This project is licensed under the [MIT License](LICENSE).
+

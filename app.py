@@ -1,6 +1,7 @@
 import os
 import json
-import pandas as pd
+import csv
+import fcntl
 from flask import Flask, render_template, request, jsonify
 from flask_mail import Mail, Message
 from werkzeug.utils import secure_filename
@@ -10,6 +11,21 @@ from config import Config
 
 app = Flask(__name__)
 app.config.from_object(Config)
+
+# Allowed extensions and file size limit
+ALLOWED_EXTENSIONS = {
+    '.txt', '.pdf', '.png', '.jpg', '.jpeg', '.gif',
+    '.zip', '.svg', '.eps', '.ai', '.psd', '.tif', '.tiff'
+}
+# 100MB per file
+MAX_FILE_SIZE = 100 * 1024 * 1024
+app.config['MAX_CONTENT_LENGTH'] = MAX_FILE_SIZE
+
+
+def allowed_file(filename: str) -> bool:
+    """Check if the filename has an allowed extension."""
+    _, ext = os.path.splitext(filename)
+    return ext.lower() in ALLOWED_EXTENSIONS
 
 mail = Mail(app)
 
@@ -45,6 +61,15 @@ def upload_files():
 
     for file in files:
         if file.filename != "":
+            if not allowed_file(file.filename):
+                return jsonify({"error": "invalid file type"}), 400
+
+            file.seek(0, os.SEEK_END)
+            size = file.tell()
+            file.seek(0)
+            if size > MAX_FILE_SIZE:
+                return jsonify({"error": "file too large"}), 400
+
             original_name = secure_filename(file.filename)
             unique_name = f"{uuid.uuid4().hex}_{original_name}"
             save_path = os.path.join(app.config['UPLOAD_FOLDER'], unique_name)
@@ -75,24 +100,49 @@ def upload_files():
     return jsonify({"message": "success"})
 
 def log_upload(designer, name, email, contact, instructions, files):
+    """Append an upload entry to the CSV log with file locking."""
     log_file = app.config['CSV_LOG']
     row = {
-        'Date': datetime.now().isoformat(),
-        'Designer': designer,
-        'Client Name': name,
-        'Email': email,
-        'Contact': contact,
-        'Instructions': instructions,
-        'Files': ", ".join(files)
+        "Date": datetime.now().isoformat(),
+        "Designer": designer,
+        "Client Name": name,
+        "Email": email,
+        "Contact": contact,
+        "Instructions": instructions,
+        "Files": ", ".join(files),
     }
 
-    if not os.path.exists(log_file):
-        df = pd.DataFrame([row])
-        df.to_csv(log_file, index=False)
-    else:
-        df = pd.read_csv(log_file)
-        df = pd.concat([df, pd.DataFrame([row])])
-        df.to_csv(log_file, index=False)
+    # Ensure the directory for the log exists
+    os.makedirs(os.path.dirname(log_file), exist_ok=True)
+
+    # Open the file for reading and appending. This allows us to check for an
+    # existing header after obtaining an exclusive lock.
+    with open(log_file, "a+", newline="") as csvfile:
+        fcntl.flock(csvfile, fcntl.LOCK_EX)
+
+        csvfile.seek(0)
+        has_data = csvfile.readline() != ""
+        csvfile.seek(0, os.SEEK_END)
+
+        writer = csv.DictWriter(
+            csvfile,
+            fieldnames=[
+                "Date",
+                "Designer",
+                "Client Name",
+                "Email",
+                "Contact",
+                "Instructions",
+                "Files",
+            ],
+        )
+
+        if not has_data:
+            writer.writeheader()
+
+        writer.writerow(row)
+        csvfile.flush()
+        fcntl.flock(csvfile, fcntl.LOCK_UN)
 
 def send_notification(designer_email, name, email, contact, instructions, files):
     msg = Message(
