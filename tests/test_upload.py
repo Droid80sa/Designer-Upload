@@ -1,7 +1,7 @@
 import io
 import pandas as pd
 from flask import url_for
-from app import DESIGNERS, app
+from app import app
 
 def test_file_upload(app_client):
     client, send_mock, csv_log, upload_folder = app_client
@@ -46,6 +46,6 @@ def test_designer_avatars_in_template(app_client):
     assert response.status_code == 200
     html = response.data.decode()
     with app.test_request_context():
-        for d in DESIGNERS:
+        for d in app.DESIGNERS:
             avatar_url = url_for('static', filename=d['avatar'])
             assert avatar_url in html

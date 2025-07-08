@@ -2,7 +2,18 @@ import os
 import json
 import csv
 import fcntl
-from flask import Flask, render_template, request, jsonify
+import re
+from functools import wraps
+from flask import (
+    Flask,
+    render_template,
+    request,
+    jsonify,
+    redirect,
+    url_for,
+    session,
+    flash,
+)
 from flask_mail import Mail, Message
 from werkzeug.utils import secure_filename
 from datetime import datetime
@@ -11,6 +22,24 @@ from config import Config
 
 app = Flask(__name__)
 app.config.from_object(Config)
+
+DESIGNER_IMAGES_FOLDER = app.config['DESIGNER_IMAGES_FOLDER']
+CSS_FILE = app.config['CSS_FILE']
+DEFAULT_AVATAR = 'images/designers/default_avatar.png'
+DESIGNERS_JSON = app.config['DESIGNERS_JSON']
+
+def load_designers():
+    with open(DESIGNERS_JSON) as f:
+        designers = json.load(f)
+    for d in designers:
+        d.setdefault('avatar', DEFAULT_AVATAR)
+    return designers
+
+def save_designers(designers):
+    with open(DESIGNERS_JSON, 'w') as f:
+        json.dump(designers, f, indent=2)
+
+DESIGNERS = load_designers()
 
 # Allowed extensions and file size limit
 ALLOWED_EXTENSIONS = {
@@ -29,15 +58,27 @@ def allowed_file(filename: str) -> bool:
 
 mail = Mail(app)
 
-# Load designers list
-with open('designers.json') as f:
-    DESIGNERS = json.load(f)
 
-# Provide fallback avatar path
-DEFAULT_AVATAR = 'images/designers/default_avatar.png'
+def login_required(fn):
+    @wraps(fn)
+    def wrapper(*args, **kwargs):
+        if not session.get('admin_logged_in'):
+            return redirect(url_for('admin_login'))
+        return fn(*args, **kwargs)
+    return wrapper
 
-for designer in DESIGNERS:
-    designer.setdefault('avatar', DEFAULT_AVATAR)
+
+def update_css_variable(variable: str, value: str) -> bool:
+    """Update a CSS variable in the dashboard stylesheet."""
+    pattern = re.compile(rf"(^\s*{re.escape(variable)}\s*:)\s*[^;]+(;)")
+    with open(CSS_FILE) as f:
+        content = f.read()
+    new_content, count = pattern.subn(rf"\1 {value}\2", content, count=1)
+    if count:
+        with open(CSS_FILE, 'w') as f:
+            f.write(new_content)
+        return True
+    return False
 
 @app.route('/')
 def index():
@@ -171,3 +212,64 @@ Location on server:
 """
     msg.body = body
     mail.send(msg)
+
+
+@app.route('/admin/login', methods=['GET', 'POST'])
+def admin_login():
+    if request.method == 'POST':
+        if request.form.get('password') == app.config['ADMIN_PASSWORD']:
+            session['admin_logged_in'] = True
+            return redirect(url_for('admin'))
+        flash('Invalid password')
+    return render_template('login.html')
+
+
+@app.route('/admin/logout')
+def admin_logout():
+    session.pop('admin_logged_in', None)
+    return redirect(url_for('admin_login'))
+
+
+@app.route('/admin')
+@login_required
+def admin():
+    variables = {}
+    with open(CSS_FILE) as f:
+        for line in f:
+            m = re.match(r"\s*(--[^:]+):\s*([^;]+);", line)
+            if m:
+                variables[m.group(1)] = m.group(2)
+    return render_template('admin.html', designers=DESIGNERS, variables=variables)
+
+
+@app.route('/admin/avatar', methods=['POST'])
+@login_required
+def upload_avatar():
+    name = request.form.get('designer')
+    file = request.files.get('avatar')
+    if not name or not file:
+        flash('Invalid data')
+        return redirect(url_for('admin'))
+    filename = secure_filename(file.filename)
+    os.makedirs(DESIGNER_IMAGES_FOLDER, exist_ok=True)
+    save_path = os.path.join(DESIGNER_IMAGES_FOLDER, filename)
+    file.save(save_path)
+    rel_path = os.path.relpath(save_path, 'static')
+    for d in DESIGNERS:
+        if d['name'] == name:
+            d['avatar'] = rel_path
+            break
+    save_designers(DESIGNERS)
+    return redirect(url_for('admin'))
+
+
+@app.route('/admin/theme', methods=['POST'])
+@login_required
+def update_theme():
+    variable = request.form.get('variable')
+    value = request.form.get('value')
+    if variable and value and update_css_variable(variable, value):
+        flash('Theme updated')
+    else:
+        flash('Failed to update theme')
+    return redirect(url_for('admin'))

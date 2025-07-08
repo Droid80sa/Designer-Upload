@@ -54,6 +54,14 @@ Install the dependencies and run the test suite with **pytest**:
 pip install -r requirements.txt pytest
 pytest
 ```
+
+## 🛠️ Admin Dashboard
+
+An authenticated admin area lets you upload designer avatars and change theme
+colors defined in `static/css/dashboard.css`. Set `ADMIN_PASSWORD` in your
+environment, visit `/admin`, and log in. The avatar form saves images to
+`static/images/designers` and updates `designers.json`. The theme form edits CSS
+variables directly in the stylesheet.
 ## 📌 Managing Dependencies
 
 All Python packages in `requirements.txt` use pinned versions. To update them:

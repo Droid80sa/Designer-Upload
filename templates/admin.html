@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block title %}Admin{% endblock %}
+{% block content %}
+<h2>Admin Dashboard</h2>
+
+<h3>Upload Designer Avatar</h3>
+<form action="{{ url_for('upload_avatar') }}" method="post" enctype="multipart/form-data" class="mb-4">
+  <div class="mb-2">
+    <select name="designer" class="form-control">
+    {% for d in designers %}
+      <option value="{{ d.name }}">{{ d.name }}</option>
+    {% endfor %}
+    </select>
+  </div>
+  <input type="file" name="avatar" class="form-control mb-2" required>
+  <button class="btn btn-primary" type="submit">Upload</button>
+</form>
+
+<h3>Theme Variables</h3>
+<form action="{{ url_for('update_theme') }}" method="post">
+  <div class="mb-2">
+    <select name="variable" class="form-control">
+      {% for k,v in variables.items() %}
+      <option value="{{ k }}">{{ k }} ({{ v }})</option>
+      {% endfor %}
+    </select>
+  </div>
+  <input type="text" name="value" class="form-control mb-2" placeholder="Value" required>
+  <button class="btn btn-primary">Save</button>
+</form>
+<a href="{{ url_for('admin_logout') }}" class="btn btn-link mt-3">Logout</a>
+{% endblock %}

@@ -12,3 +12,11 @@ class Config:
     MAIL_PASSWORD = os.environ.get('MAIL_PASSWORD', '')
     MAIL_DEFAULT_SENDER = MAIL_USERNAME
     PUBLIC_BASE_URL = 'https://upload.hotink.org.za'
+
+    # Admin settings
+    ADMIN_PASSWORD = os.environ.get('ADMIN_PASSWORD', 'admin')
+    DESIGNER_IMAGES_FOLDER = os.environ.get(
+        'DESIGNER_IMAGES_FOLDER', os.path.join('static', 'images', 'designers')
+    )
+    CSS_FILE = os.environ.get('CSS_FILE', os.path.join('static', 'css', 'dashboard.css'))
+    DESIGNERS_JSON = os.environ.get('DESIGNERS_JSON', 'designers.json')
