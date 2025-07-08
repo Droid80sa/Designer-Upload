@@ -111,10 +111,21 @@ select#categoryFilter {
 
 #uploadForm {
   background-color: var(--light-card);
+  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
 }
 
 [data-theme="dark"] #uploadForm {
   background-color: var(--dark-card);
+  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.5);
+}
+
+.upload-note {
+  font-size: 1.3rem;
+  color: #343a40 !important;
+}
+
+[data-theme="dark"] .upload-note {
+  color: #ffffff !important;
 }
 
 @media (max-width: 576px) {
