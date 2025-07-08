@@ -46,7 +46,7 @@ ALLOWED_EXTENSIONS = {
     '.txt', '.pdf', '.png', '.jpg', '.jpeg', '.gif',
     '.zip', '.svg', '.eps', '.ai', '.psd', '.tif', '.tiff'
 }
-# 100MB per file
+# 1000MB per file
 MAX_FILE_SIZE = 1024 * 1024 * 1024
 app.config['MAX_CONTENT_LENGTH'] = MAX_FILE_SIZE
 
