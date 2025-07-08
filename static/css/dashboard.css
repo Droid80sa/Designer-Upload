@@ -33,6 +33,14 @@ body {
   font-size: 1.4286rem; /* Keep header text at original size */
 }
 
+#navbarBrand {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 2rem;
+  font-weight: 700;
+}
+
 [data-theme="dark"] .navbar {
   background-color: var(--dark-card);
   font-size: 1.4286rem;
@@ -123,6 +131,14 @@ select#categoryFilter {
   box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.5);
 }
 
+#uploadForm label {
+  color: #343a40;
+}
+
+[data-theme="dark"] #uploadForm label {
+  color: var(--text-dark);
+}
+
 @media (max-width: 768px) {
   #uploadForm {
     width: 100%;
@@ -147,6 +163,8 @@ select#categoryFilter {
   display: block;
   margin-left: auto;
   margin-right: auto;
+  font-size: 1.25rem;
+  padding: 0.75rem 2rem;
 }
 
 .upload-note {

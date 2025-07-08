@@ -15,7 +15,7 @@
            src="{{ url_for('static', filename=designers[0].avatar) if designers else url_for('static', filename='images/designers/default_avatar.png') }}" alt="Designer Avatar">
     </div>
     <div class="form-group mb-3">
-      <label class="text-white">Designer</label>
+      <label>Designer</label>
       <select id="designerSelect" class="form-control" name="designer" required>
         {% for d in designers %}
         <option value="{{ d.name }}" data-avatar="{{ url_for('static', filename=d.avatar) }}">{{ d.name }}</option>
@@ -23,19 +23,19 @@
       </select>
     </div>
     <div class="form-group mb-3">
-      <label class="text-white">Your Name</label>
+      <label>Your Name</label>
       <input type="text" class="form-control" name="client_name" required>
     </div>
     <div class="form-group mb-3">
-      <label class="text-white">Email</label>
+      <label>Email</label>
       <input type="email" class="form-control" name="email" required>
     </div>
     <div class="form-group mb-3">
-      <label class="text-white">Contact</label>
+      <label>Contact</label>
       <input type="text" class="form-control" name="contact" required>
     </div>
     <div class="form-group mb-3">
-      <label class="text-white">Instructions</label>
+      <label>Instructions</label>
       <textarea class="form-control" name="instructions" rows="3"></textarea>
     </div>
   </form>
