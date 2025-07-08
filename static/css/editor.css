@@ -1,0 +1,65 @@
+:root {
+  --gray: #9a9b9c;
+  --teal: #6cacc2;
+  --red: #cc374a;
+  --navy: #43485c;
+  --light-bg: #f9f9f9;
+  --dark-bg: #1e1e24;
+  --light-card: #ffffff;
+  --dark-card: #2c2f36;
+  --text-dark: #f1f1f1;
+}
+
+html {
+  font-size: 70%;
+}
+
+body {
+  font-family: 'Inter', sans-serif;
+  background-color: var(--light-bg);
+  color: var(--navy);
+  transition: all 0.3s ease;
+}
+
+[data-theme="dark"] body {
+  background-color: var(--dark-bg);
+  color: var(--text-dark);
+}
+
+h2 {
+  font-weight: 700;
+  color: var(--red);
+}
+
+textarea {
+  background-color: #fdfdfd;
+  border: 1px solid #ccc;
+  font-family: 'Courier New', monospace;
+  font-size: 0.9rem;
+  resize: vertical;
+}
+
+[data-theme="dark"] textarea {
+  background-color: var(--dark-card);
+  color: var(--text-dark);
+  border-color: #444;
+}
+
+button.btn {
+  font-weight: 600;
+}
+
+#uploadZone {
+  border: 2px dashed var(--gray);
+  cursor: pointer;
+  transition: background-color 0.2s, border-color 0.2s;
+}
+
+#uploadZone.dragover {
+  background-color: var(--light-card);
+  border-color: var(--teal);
+}
+
+[data-theme="dark"] #uploadZone.dragover {
+  background-color: var(--dark-card);
+}

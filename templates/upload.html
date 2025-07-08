@@ -1,0 +1,120 @@
+{% extends "base.html" %}
+{% block title %}Upload Artwork – Hot Ink{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+  <button class="btn btn-primary btn-lg" data-bs-toggle="modal" data-bs-target="#uploadModal">
+    🎨 Upload Artwork
+  </button>
+</div>
+
+<!-- Upload Modal -->
+<div class="modal fade" id="uploadModal" tabindex="-1" aria-labelledby="uploadModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-centered">
+    <div class="modal-content bg-dark text-white border-info">
+      <div class="modal-header">
+        <h5 class="modal-title" id="uploadModalLabel">Upload Your Artwork</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form id="uploadForm">
+          <div class="form-group mb-3">
+            <label>Designer</label>
+            <select class="form-control" name="designer" required>
+              {% for d in designers %}
+              <option value="{{ d.name }}">{{ d.name }}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <div class="form-group mb-3">
+            <label>Your Name</label>
+            <input type="text" class="form-control" name="client_name" required>
+          </div>
+          <div class="form-group mb-3">
+            <label>Email</label>
+            <input type="email" class="form-control" name="email" required>
+          </div>
+          <div class="form-group mb-3">
+            <label>Contact</label>
+            <input type="text" class="form-control" name="contact" required>
+          </div>
+          <div class="form-group mb-3">
+            <label>Instructions</label>
+            <textarea class="form-control" name="instructions" rows="3"></textarea>
+          </div>
+        </form>
+
+        <div id="dropzone" class="dropzone border border-info rounded"></div>
+
+        <!-- Progress Bar -->
+        <div class="progress mt-4" style="height: 20px; display: none;" id="uploadProgress">
+          <div class="progress-bar progress-bar-striped progress-bar-animated bg-info"
+               role="progressbar" style="width: 0%;" id="uploadProgressBar">
+            0%
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+Dropzone.autoDiscover = false;
+
+const progressWrapper = document.getElementById("uploadProgress");
+const progressBar = document.getElementById("uploadProgressBar");
+
+const myDropzone = new Dropzone("#dropzone", {
+  url: "/upload",
+  autoProcessQueue: false,
+  uploadMultiple: true,
+  parallelUploads: 10,
+  maxFilesize: 1024,
+  addRemoveLinks: true,
+  init: function() {
+    const dz = this;
+
+    dz.on("sendingmultiple", () => {
+      progressWrapper.style.display = "block";
+      progressBar.style.width = "0%";
+      progressBar.textContent = "0%";
+    });
+
+    dz.on("uploadprogress", (file, progress) => {
+      const pct = Math.round(progress);
+      progressBar.style.width = pct + "%";
+      progressBar.textContent = pct + "%";
+    });
+
+    dz.on("successmultiple", () => {
+      Swal.fire('✅ Upload Complete!', 'Your designer will respond shortly.', 'success')
+        .then(() => {
+          window.location.reload();
+        });
+    });
+
+    dz.on("error", () => {
+      Swal.fire('⚠️ Upload Error', 'Something went wrong. Try again or contact support.', 'error');
+      progressWrapper.style.display = "none";
+    });
+
+    dz.on("queuecomplete", () => {
+      progressWrapper.style.display = "none";
+    });
+
+    document.querySelector("#uploadForm").addEventListener("submit", function(e) {
+      e.preventDefault();
+      const formData = new FormData(e.target);
+      dz.options.params = Object.fromEntries(formData);
+      dz.processQueue();
+    });
+  }
+});
+
+myDropzone.on("addedfile", function() {
+  document.querySelector("#uploadForm").dispatchEvent(new Event('submit'));
+});
+</script>
+{% endblock %}

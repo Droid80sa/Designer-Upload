@@ -1,0 +1,9 @@
+services:
+  upload-app:
+    build: .
+    ports:
+      - "5055:5055"
+    volumes:
+      - /mnt/nas_uploads:/mnt/nas_uploads
+    environment:
+      - SECRET_KEY=supersecret
