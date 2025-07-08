@@ -41,7 +41,7 @@ def test_file_upload(app_client):
     msg = send_mock.call_args.args[0]
     assert 'Tester' in msg.subject
     assert msg.recipients == ['andrew@hotink.co.za']
-    assert saved_name in msg.body
+    assert 'hello.txt' in msg.body
 
 
 def test_designer_avatars_in_template(app_client):

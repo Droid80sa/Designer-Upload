@@ -151,7 +151,8 @@ def upload_files():
         client_email,
         contact,
         instructions,
-        uploaded_files
+        uploaded_files,
+        original_files,
     )
 
     return jsonify({"message": "success"})
@@ -201,7 +202,7 @@ def log_upload(designer, name, email, contact, instructions, files):
         csvfile.flush()
         fcntl.flock(csvfile, fcntl.LOCK_UN)
 
-def send_notification(designer_email, name, email, contact, instructions, files):
+def send_notification(designer_email, name, email, contact, instructions, files, originals):
     msg = Message(
         subject=f"New Artwork Upload from {name}",
         recipients=[designer_email]
@@ -209,6 +210,7 @@ def send_notification(designer_email, name, email, contact, instructions, files)
     file_paths = [
         os.path.join(Config.FILE_SERVER_PATH, f) for f in files
     ]
+
     body = f"""
 New artwork uploaded:
 
@@ -218,7 +220,7 @@ Contact: {contact}
 Instructions: {instructions}
 
 Files:
-{chr(10).join(files)}
+{chr(10).join(originals)}
 
 Location on server:
 {chr(10).join(file_paths)}
