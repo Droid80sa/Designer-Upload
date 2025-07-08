@@ -12,6 +12,21 @@ from config import Config
 app = Flask(__name__)
 app.config.from_object(Config)
 
+# Allowed extensions and file size limit
+ALLOWED_EXTENSIONS = {
+    '.txt', '.pdf', '.png', '.jpg', '.jpeg', '.gif',
+    '.zip', '.svg', '.eps', '.ai', '.psd', '.tif', '.tiff'
+}
+# 100MB per file
+MAX_FILE_SIZE = 100 * 1024 * 1024
+app.config['MAX_CONTENT_LENGTH'] = MAX_FILE_SIZE
+
+
+def allowed_file(filename: str) -> bool:
+    """Check if the filename has an allowed extension."""
+    _, ext = os.path.splitext(filename)
+    return ext.lower() in ALLOWED_EXTENSIONS
+
 mail = Mail(app)
 
 # Load designers list
@@ -46,6 +61,15 @@ def upload_files():
 
     for file in files:
         if file.filename != "":
+            if not allowed_file(file.filename):
+                return jsonify({"error": "invalid file type"}), 400
+
+            file.seek(0, os.SEEK_END)
+            size = file.tell()
+            file.seek(0)
+            if size > MAX_FILE_SIZE:
+                return jsonify({"error": "file too large"}), 400
+
             original_name = secure_filename(file.filename)
             unique_name = f"{uuid.uuid4().hex}_{original_name}"
             save_path = os.path.join(app.config['UPLOAD_FOLDER'], unique_name)
