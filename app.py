@@ -5,6 +5,7 @@ from flask import Flask, render_template, request, jsonify
 from flask_mail import Mail, Message
 from werkzeug.utils import secure_filename
 from datetime import datetime
+import uuid
 from config import Config
 
 app = Flask(__name__)
@@ -38,15 +39,18 @@ def upload_files():
         "production@hotink.co.za"
     )
 
-    uploaded_files = []
+    uploaded_files = []  # list of saved unique filenames
+    original_files = []  # keep originals for reference if needed
     files = request.files.getlist('file')
 
     for file in files:
         if file.filename != "":
-            filename = secure_filename(file.filename)
-            save_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+            original_name = secure_filename(file.filename)
+            unique_name = f"{uuid.uuid4().hex}_{original_name}"
+            save_path = os.path.join(app.config['UPLOAD_FOLDER'], unique_name)
             file.save(save_path)
-            uploaded_files.append(filename)
+            uploaded_files.append(unique_name)
+            original_files.append(original_name)
 
     # Log upload
     log_upload(

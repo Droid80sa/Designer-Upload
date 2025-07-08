@@ -18,17 +18,21 @@ def test_file_upload(app_client):
     assert response.status_code == 200
     assert response.get_json() == {'message': 'success'}
 
-    # File saved
-    assert (upload_folder / 'hello.txt').exists()
+    # File saved with unique name
+    files = list(upload_folder.iterdir())
+    assert len(files) == 1
+    saved_name = files[0].name
+    assert saved_name.endswith('hello.txt')
+    assert saved_name != 'hello.txt'
 
     # CSV log updated
     df = pd.read_csv(csv_log)
     assert df.iloc[0]['Client Name'] == 'Tester'
-    assert df.iloc[0]['Files'] == 'hello.txt'
+    assert df.iloc[0]['Files'] == saved_name
 
     # Email sent
     send_mock.assert_called_once()
     msg = send_mock.call_args.args[0]
     assert 'Tester' in msg.subject
     assert msg.recipients == ['andrew@hotink.co.za']
-    assert 'hello.txt' in msg.body
+    assert saved_name in msg.body
