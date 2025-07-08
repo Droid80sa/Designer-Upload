@@ -5,5 +5,10 @@ services:
       - "5055:5055"
     volumes:
       - /mnt/nas_uploads:/mnt/nas_uploads
+    # Load sensitive values from the .env file
+    env_file:
+      - .env
     environment:
-      - SECRET_KEY=supersecret
+      - SECRET_KEY=${SECRET_KEY}
+      - MAIL_USERNAME=${MAIL_USERNAME}
+      - MAIL_PASSWORD=${MAIL_PASSWORD}
