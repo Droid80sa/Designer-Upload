@@ -1,6 +1,7 @@
 import os
 import json
-import pandas as pd
+import csv
+import fcntl
 from flask import Flask, render_template, request, jsonify
 from flask_mail import Mail, Message
 from werkzeug.utils import secure_filename
@@ -75,24 +76,49 @@ def upload_files():
     return jsonify({"message": "success"})
 
 def log_upload(designer, name, email, contact, instructions, files):
+    """Append an upload entry to the CSV log with file locking."""
     log_file = app.config['CSV_LOG']
     row = {
-        'Date': datetime.now().isoformat(),
-        'Designer': designer,
-        'Client Name': name,
-        'Email': email,
-        'Contact': contact,
-        'Instructions': instructions,
-        'Files': ", ".join(files)
+        "Date": datetime.now().isoformat(),
+        "Designer": designer,
+        "Client Name": name,
+        "Email": email,
+        "Contact": contact,
+        "Instructions": instructions,
+        "Files": ", ".join(files),
     }
 
-    if not os.path.exists(log_file):
-        df = pd.DataFrame([row])
-        df.to_csv(log_file, index=False)
-    else:
-        df = pd.read_csv(log_file)
-        df = pd.concat([df, pd.DataFrame([row])])
-        df.to_csv(log_file, index=False)
+    # Ensure the directory for the log exists
+    os.makedirs(os.path.dirname(log_file), exist_ok=True)
+
+    # Open the file for reading and appending. This allows us to check for an
+    # existing header after obtaining an exclusive lock.
+    with open(log_file, "a+", newline="") as csvfile:
+        fcntl.flock(csvfile, fcntl.LOCK_EX)
+
+        csvfile.seek(0)
+        has_data = csvfile.readline() != ""
+        csvfile.seek(0, os.SEEK_END)
+
+        writer = csv.DictWriter(
+            csvfile,
+            fieldnames=[
+                "Date",
+                "Designer",
+                "Client Name",
+                "Email",
+                "Contact",
+                "Instructions",
+                "Files",
+            ],
+        )
+
+        if not has_data:
+            writer.writeheader()
+
+        writer.writerow(row)
+        csvfile.flush()
+        fcntl.flock(csvfile, fcntl.LOCK_UN)
 
 def send_notification(designer_email, name, email, contact, instructions, files):
     msg = Message(
