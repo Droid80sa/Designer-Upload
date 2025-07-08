@@ -96,7 +96,12 @@ const myDropzone = new Dropzone("#dropzone", {
 
     document.querySelector("#uploadForm").addEventListener("submit", function(e) {
       e.preventDefault();
-      const formData = new FormData(e.target);
+      const form = e.target;
+      if (!form.reportValidity()) {
+        return;
+      }
+
+      const formData = new FormData(form);
       dz.options.params = Object.fromEntries(formData);
       dz.processQueue();
     });
