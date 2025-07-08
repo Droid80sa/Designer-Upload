@@ -1,7 +1,9 @@
 import io
+import os
 import csv
 from flask import url_for
 from app import app
+from config import Config
 
 def test_file_upload(app_client):
     client, send_mock, csv_log, upload_folder = app_client
@@ -51,3 +53,26 @@ def test_designer_avatars_in_template(app_client):
         for d in app.DESIGNERS:
             avatar_url = url_for('designer_avatar', filename=d['avatar'])
             assert avatar_url in html
+
+
+def test_notification_includes_file_server_path(app_client, monkeypatch):
+    client, send_mock, _, upload_folder = app_client
+
+    monkeypatch.setattr(Config, 'FILE_SERVER_PATH', '/srv/files')
+
+    data = {
+        'designer': 'Andrew',
+        'client_name': 'Tester',
+        'email': 'tester@example.com',
+        'contact': '123',
+        'instructions': 'test'
+    }
+    data['file'] = (io.BytesIO(b'data'), 'path.txt')
+
+    response = client.post('/upload', data=data, content_type='multipart/form-data')
+    assert response.status_code == 200
+
+    saved_name = next(upload_folder.iterdir()).name
+    expected_path = os.path.join('/srv/files', saved_name)
+    msg = send_mock.call_args.args[0]
+    assert expected_path in msg.body
