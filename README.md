@@ -61,7 +61,6 @@ All Python packages in `requirements.txt` use pinned versions. To update them:
 1. Create a fresh virtual environment and install the project.
 2. Run `pip freeze > requirements.txt` to capture working versions.
 3. Commit the updated file so builds remain reproducible.
-=======
 ## License
 
 This project is licensed under the [MIT License](LICENSE).
