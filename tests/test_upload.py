@@ -49,5 +49,5 @@ def test_designer_avatars_in_template(app_client):
     html = response.data.decode()
     with app.test_request_context():
         for d in app.DESIGNERS:
-            avatar_url = url_for('static', filename=d['avatar'])
+            avatar_url = url_for('designer_avatar', filename=d['avatar'])
             assert avatar_url in html

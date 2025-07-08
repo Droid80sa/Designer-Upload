@@ -15,8 +15,15 @@ class Config:
 
     # Admin settings
     ADMIN_PASSWORD = os.environ.get('ADMIN_PASSWORD', 'admin')
-    DESIGNER_IMAGES_FOLDER = os.environ.get(
-        'DESIGNER_IMAGES_FOLDER', os.path.join('static', 'images', 'designers')
+    DESIGNERS_JSON = os.environ.get(
+        'DESIGNERS_JSON', os.path.join('designer_data', 'designers.json')
     )
-    CSS_FILE = os.environ.get('CSS_FILE', os.path.join('static', 'css', 'dashboard.css'))
-    DESIGNERS_JSON = os.environ.get('DESIGNERS_JSON', 'designers.json')
+    DESIGNER_IMAGES_FOLDER = os.environ.get(
+        'DESIGNER_IMAGES_FOLDER', os.path.join('designer_data', 'avatars')
+    )
+    DEFAULT_AVATAR = os.environ.get(
+        'DEFAULT_AVATAR', os.path.join('designer_data', 'avatars', 'default_avatar.png')
+    )
+    CSS_FILE = os.environ.get(
+        'CSS_FILE', os.path.join('static', 'css', 'dashboard.css')
+    )

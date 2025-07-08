@@ -20,10 +20,10 @@ def app_client(tmp_path, monkeypatch):
 
     designers_json = tmp_path / "designers.json"
     css_file = tmp_path / "dashboard.css"
-    designers_folder = tmp_path / "designers"
+    designers_folder = tmp_path / "avatars"
     designers_folder.mkdir()
 
-    with open(os.path.join(os.path.dirname(__file__), "..", "designers.json")) as f:
+    with open(os.path.join(os.path.dirname(__file__), "..", "designer_data", "designers.json")) as f:
         data = json.load(f)
     with open(designers_json, "w") as f:
         json.dump(data, f)
@@ -36,6 +36,7 @@ def app_client(tmp_path, monkeypatch):
     app.config['DESIGNERS_JSON'] = str(designers_json)
     app.config['CSS_FILE'] = str(css_file)
     app.config['DESIGNER_IMAGES_FOLDER'] = str(designers_folder)
+    app.config['DEFAULT_AVATAR'] = str(designers_folder / 'default_avatar.png')
     app.config['ADMIN_PASSWORD'] = 'secret'
 
     app.DESIGNERS = load_designers()
