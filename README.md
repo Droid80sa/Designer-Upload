@@ -10,7 +10,7 @@ A simple, styled file uploader built in Flask to route design files directly to 
 - 📧 Auto-email notification to selected designer
 - 🗂️ Upload log saved as CSV for tracking
 - 📁 Files stored on `/mnt/nas_uploads` (or mounted volume)
-- 🎨 Modal-based upload form with themed progress bar
+- 🎨 Full-page upload interface with themed progress bar
 - 🧠 Configurable via `config.py` or Docker environment
 
 ---
