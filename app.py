@@ -70,7 +70,10 @@ def login_required(fn):
 
 def update_css_variable(variable: str, value: str) -> bool:
     """Update a CSS variable in the dashboard stylesheet."""
-    pattern = re.compile(rf"(^\s*{re.escape(variable)}\s*:)\s*[^;]+(;)")
+    pattern = re.compile(
+        rf"(^\s*{re.escape(variable)}\s*:)\s*[^;]+(;)",
+        re.MULTILINE,
+    )
     with open(CSS_FILE) as f:
         content = f.read()
     new_content, count = pattern.subn(rf"\1 {value}\2", content, count=1)
