@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" data-bs-theme="light">
+<html lang="en" data-theme="light">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -44,10 +44,10 @@
   <script>
     document.getElementById('toggle-theme').addEventListener('click', () => {
       const html = document.documentElement;
-      if (html.getAttribute('data-bs-theme') === 'dark') {
-        html.setAttribute('data-bs-theme', 'light');
+      if (html.getAttribute('data-theme') === 'dark') {
+        html.setAttribute('data-theme', 'light');
       } else {
-        html.setAttribute('data-bs-theme', 'dark');
+        html.setAttribute('data-theme', 'dark');
       }
     });
   </script>
