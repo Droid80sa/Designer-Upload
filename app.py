@@ -33,6 +33,12 @@ mail = Mail(app)
 with open('designers.json') as f:
     DESIGNERS = json.load(f)
 
+# Provide fallback avatar path
+DEFAULT_AVATAR = 'images/designers/default_avatar.png'
+
+for designer in DESIGNERS:
+    designer.setdefault('avatar', DEFAULT_AVATAR)
+
 @app.route('/')
 def index():
     return render_template(
