@@ -33,12 +33,21 @@ body {
   font-size: 1.4286rem; /* Keep header text at original size */
 }
 
-#navbarBrand {
+#navbarLogo {
+  font-size: 2rem;
+  font-weight: 700;
+}
+
+#navbarTitle {
   position: absolute;
   left: 50%;
   transform: translateX(-50%);
   font-size: 2rem;
   font-weight: 700;
+}
+
+.navbar-brand img {
+  max-height: 50px;
 }
 
 [data-theme="dark"] .navbar {
