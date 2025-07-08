@@ -45,3 +45,12 @@ MAIL_PASSWORD=your_password
 ```
 
 The `docker-compose.yml` file and `config.py` load these variables when running locally.
+
+## 🧪 Running Tests
+
+Install the dependencies and run the test suite with **pytest**:
+
+```bash
+pip install -r requirements.txt pytest
+pytest
+```
