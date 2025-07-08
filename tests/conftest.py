@@ -1,6 +1,13 @@
 import io
+import os
+import sys
 import pytest
 from unittest.mock import MagicMock
+
+# Ensure the project root is on the import path so that ``app`` can be
+# imported when the tests are executed from arbitrary working
+# directories.
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
 from app import app, mail
 
