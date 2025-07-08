@@ -129,6 +129,26 @@ select#categoryFilter {
   }
 }
 
+/* Centered dropzone to match the upload form */
+#dropzone {
+  width: 50%;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+@media (max-width: 768px) {
+  #dropzone {
+    width: 100%;
+  }
+}
+
+/* Center the start upload button */
+#startUploadBtn {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+
 .upload-note {
   font-size: 1.3rem;
   color: #343a40 !important;
