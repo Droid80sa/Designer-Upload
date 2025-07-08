@@ -2,58 +2,48 @@
 {% block title %}Upload Artwork – Hot Ink{% endblock %}
 
 {% block content %}
-<div class="container mt-4">
-  <button class="btn btn-primary btn-lg" data-bs-toggle="modal" data-bs-target="#uploadModal">
-    🎨 Upload Artwork
-  </button>
-</div>
+<div class="container py-5">
+  <div class="text-center mb-4">
+    <img src="{{ url_for('static', filename='images/logo.png') }}" alt="Hot Ink Logo" style="max-width: 180px;">
+    <h2 class="mt-3 text-white">Upload Your Artwork</h2>
+    <p class="text-muted">Files are securely sent to your selected designer. Please fill in your details below.</p>
+  </div>
 
-<!-- Upload Modal -->
-<div class="modal fade" id="uploadModal" tabindex="-1" aria-labelledby="uploadModalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-lg modal-dialog-centered">
-    <div class="modal-content bg-dark text-white border-info">
-      <div class="modal-header">
-        <h5 class="modal-title" id="uploadModalLabel">Upload Your Artwork</h5>
-        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body">
-        <form id="uploadForm">
-          <div class="form-group mb-3">
-            <label>Designer</label>
-            <select class="form-control" name="designer" required>
-              {% for d in designers %}
-              <option value="{{ d.name }}">{{ d.name }}</option>
-              {% endfor %}
-            </select>
-          </div>
-          <div class="form-group mb-3">
-            <label>Your Name</label>
-            <input type="text" class="form-control" name="client_name" required>
-          </div>
-          <div class="form-group mb-3">
-            <label>Email</label>
-            <input type="email" class="form-control" name="email" required>
-          </div>
-          <div class="form-group mb-3">
-            <label>Contact</label>
-            <input type="text" class="form-control" name="contact" required>
-          </div>
-          <div class="form-group mb-3">
-            <label>Instructions</label>
-            <textarea class="form-control" name="instructions" rows="3"></textarea>
-          </div>
-        </form>
+  <form id="uploadForm" class="bg-dark p-4 rounded shadow-sm">
+    <div class="form-group mb-3">
+      <label class="text-white">Designer</label>
+      <select class="form-control" name="designer" required>
+        {% for d in designers %}
+        <option value="{{ d.name }}">{{ d.name }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div class="form-group mb-3">
+      <label class="text-white">Your Name</label>
+      <input type="text" class="form-control" name="client_name" required>
+    </div>
+    <div class="form-group mb-3">
+      <label class="text-white">Email</label>
+      <input type="email" class="form-control" name="email" required>
+    </div>
+    <div class="form-group mb-3">
+      <label class="text-white">Contact</label>
+      <input type="text" class="form-control" name="contact" required>
+    </div>
+    <div class="form-group mb-3">
+      <label class="text-white">Instructions</label>
+      <textarea class="form-control" name="instructions" rows="3"></textarea>
+    </div>
+  </form>
 
-        <div id="dropzone" class="dropzone border border-info rounded"></div>
+  <!-- Dropzone -->
+  <div id="dropzone" class="dropzone mt-3 border border-info rounded"></div>
 
-        <!-- Progress Bar -->
-        <div class="progress mt-4" style="height: 20px; display: none;" id="uploadProgress">
-          <div class="progress-bar progress-bar-striped progress-bar-animated bg-info"
-               role="progressbar" style="width: 0%;" id="uploadProgressBar">
-            0%
-          </div>
-        </div>
-      </div>
+  <!-- Progress Bar -->
+  <div class="progress mt-4" style="height: 20px; display: none;" id="uploadProgress">
+    <div class="progress-bar progress-bar-striped progress-bar-animated bg-info"
+         role="progressbar" style="width: 0%;" id="uploadProgressBar">
+      0%
     </div>
   </div>
 </div>
@@ -71,7 +61,7 @@ const myDropzone = new Dropzone("#dropzone", {
   autoProcessQueue: false,
   uploadMultiple: true,
   parallelUploads: 10,
-  maxFilesize: 1024,
+  maxFilesize: 1024, // MB
   addRemoveLinks: true,
   init: function() {
     const dz = this;
