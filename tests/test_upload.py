@@ -1,5 +1,7 @@
 import io
 import pandas as pd
+from flask import url_for
+from app import DESIGNERS, app
 
 def test_file_upload(app_client):
     client, send_mock, csv_log, upload_folder = app_client
@@ -36,3 +38,14 @@ def test_file_upload(app_client):
     assert 'Tester' in msg.subject
     assert msg.recipients == ['andrew@hotink.co.za']
     assert saved_name in msg.body
+
+
+def test_designer_avatars_in_template(app_client):
+    client, _, _, _ = app_client
+    response = client.get('/')
+    assert response.status_code == 200
+    html = response.data.decode()
+    with app.test_request_context():
+        for d in DESIGNERS:
+            avatar_url = url_for('static', filename=d['avatar'])
+            assert avatar_url in html
