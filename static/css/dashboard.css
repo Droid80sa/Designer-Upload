@@ -38,6 +38,17 @@ body {
   font-size: 1.4286rem;
 }
 
+/* Brand colored navbar */
+.navbar.bg-primary {
+  background-color: var(--teal) !important;
+}
+
+.navbar.bg-primary .navbar-brand,
+.navbar.bg-primary .nav-link,
+.navbar.bg-primary .navbar-text {
+  color: #fff;
+}
+
 .navbar .text-center h4 {
   font-weight: 700;
   margin: 0;
