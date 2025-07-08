@@ -42,6 +42,7 @@ Create a `.env` file with:
 SECRET_KEY=supersecret
 MAIL_USERNAME=proofs@hotink.co.za
 MAIL_PASSWORD=your_password
+FILE_SERVER_PATH=NAS/_Temp Work/ClientFiles
 ```
 
 The `docker-compose.yml` file and `config.py` load these variables when running locally.

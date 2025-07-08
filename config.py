@@ -27,3 +27,8 @@ class Config:
     CSS_FILE = os.environ.get(
         'CSS_FILE', os.path.join('static', 'css', 'dashboard.css')
     )
+
+    # Base path shown in notification emails for uploaded files
+    FILE_SERVER_PATH = os.environ.get(
+        'FILE_SERVER_PATH', 'NAS/_Temp Work/ClientFiles'
+    )
