@@ -1,0 +1,52 @@
+[
+  {
+    "name": "Andrew",
+    "email": "andrew@hotink.co.za",
+    "avatar": "andrew.png"
+  },
+  {
+    "name": "Production",
+    "email": "production@hotink.co.za",
+    "avatar": "production.png"
+  },
+  {
+    "name": "Antonet",
+    "email": "antonet@hotink.co.za",
+    "avatar": "antonet.png"
+  },
+  {
+    "name": "Cheslyn",
+    "email": "cheslyn@hotink.co.za",
+    "avatar": "cheslyn.png"
+  },
+  {
+    "name": "Mariette",
+    "email": "mariette@hotink.co.za",
+    "avatar": "mariette.png"
+  },
+  {
+    "name": "Nicole",
+    "email": "nicole@hotink.co.za",
+    "avatar": "nicole.png"
+  },
+  {
+    "name": "Nur",
+    "email": "nur@hotink.co.za",
+    "avatar": "nur.png"
+  },
+  {
+    "name": "Quotes",
+    "email": "quotes@hotink.co.za",
+    "avatar": "quotes.png"
+  },
+  {
+    "name": "Justin",
+    "email": "signage@hotink.co.za",
+    "avatar": "justin.png"
+  },
+  {
+    "name": "Secret",
+    "email": "reception@hotink.co.za",
+    "avatar": "secret.png"
+  }
+]

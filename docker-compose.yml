@@ -5,8 +5,7 @@ services:
       - "5055:5055"
     volumes:
       - /mnt/nas_uploads:/mnt/nas_uploads
-      - ./designer_data:/app/static/images/designers
-      - ./designer_data/designers.json:/app/designers.json
+      - ./designer_data:/app/designer_data
     # Load sensitive values from the .env file
     env_file:
       - .env

@@ -13,6 +13,7 @@ from flask import (
     url_for,
     session,
     flash,
+    send_from_directory,
 )
 from flask_mail import Mail, Message
 from werkzeug.utils import secure_filename
@@ -25,7 +26,7 @@ app.config.from_object(Config)
 
 DESIGNER_IMAGES_FOLDER = app.config['DESIGNER_IMAGES_FOLDER']
 CSS_FILE = app.config['CSS_FILE']
-DEFAULT_AVATAR = 'images/designers/default_avatar.png'
+DEFAULT_AVATAR = os.path.basename(app.config['DEFAULT_AVATAR'])
 DESIGNERS_JSON = app.config['DESIGNERS_JSON']
 
 def load_designers():
@@ -59,6 +60,11 @@ def allowed_file(filename: str) -> bool:
 mail = Mail(app)
 
 
+@app.route('/designer_data/avatars/<path:filename>')
+def designer_avatar(filename):
+    return send_from_directory(DESIGNER_IMAGES_FOLDER, filename)
+
+
 def login_required(fn):
     @wraps(fn)
     def wrapper(*args, **kwargs):
@@ -87,7 +93,8 @@ def update_css_variable(variable: str, value: str) -> bool:
 def index():
     return render_template(
         'upload.html',
-        designers=DESIGNERS
+        designers=DESIGNERS,
+        default_avatar=DEFAULT_AVATAR
     )
 
 @app.route('/upload', methods=['POST'])
@@ -257,10 +264,9 @@ def upload_avatar():
     os.makedirs(DESIGNER_IMAGES_FOLDER, exist_ok=True)
     save_path = os.path.join(DESIGNER_IMAGES_FOLDER, filename)
     file.save(save_path)
-    rel_path = os.path.relpath(save_path, 'static')
     for d in DESIGNERS:
         if d['name'] == name:
-            d['avatar'] = rel_path
+            d['avatar'] = filename
             break
     save_designers(DESIGNERS)
     return redirect(url_for('admin'))

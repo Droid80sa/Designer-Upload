@@ -53,8 +53,7 @@ The `docker-compose.yml` file and `config.py` load these variables when running 
 
 ```yaml
 volumes:
-  - ./designer_data:/app/static/images/designers
-  - ./designer_data/designers.json:/app/designers.json
+  - ./designer_data:/app/designer_data
 ```
 
 Create this folder next to `docker-compose.yml` before running `docker compose up`.
@@ -74,8 +73,8 @@ pytest
 
 An authenticated admin area lets you upload designer avatars and change theme
 colors defined in `static/css/dashboard.css`. Set `ADMIN_PASSWORD` in your
-environment, visit `/admin`, and log in. The avatar form saves images to
-`static/images/designers` and updates `designers.json`. The theme form edits CSS
+  environment, visit `/admin`, and log in. The avatar form saves images to
+  `designer_data/avatars` and updates `designer_data/designers.json`. The theme form edits CSS
 variables directly in the stylesheet.
 ## 📌 Managing Dependencies
 
