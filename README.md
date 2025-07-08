@@ -54,3 +54,7 @@ Install the dependencies and run the test suite with **pytest**:
 pip install -r requirements.txt pytest
 pytest
 ```
+
+## License
+
+This project is licensed under the [MIT License](LICENSE).
