@@ -249,7 +249,20 @@ def admin():
             m = re.match(r"\s*(--[^:]+):\s*([^;]+);", line)
             if m:
                 variables[m.group(1)] = m.group(2)
-    return render_template('admin.html', designers=DESIGNERS, variables=variables)
+
+    log_entries = []
+    log_file = app.config['CSV_LOG']
+    if os.path.exists(log_file):
+        with open(log_file, newline='') as csvfile:
+            reader = csv.DictReader(csvfile)
+            log_entries = list(reader)
+
+    return render_template(
+        'admin.html',
+        designers=DESIGNERS,
+        variables=variables,
+        log_entries=log_entries,
+    )
 
 
 @app.route('/admin/avatar', methods=['POST'])

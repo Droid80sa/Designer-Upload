@@ -28,5 +28,31 @@
   <input type="text" name="value" class="form-control mb-2" placeholder="Value" required>
   <button class="btn btn-primary">Save</button>
 </form>
+
+<h3 class="mt-5">Upload Log</h3>
+{% if log_entries %}
+<div class="table-responsive">
+  <table class="table table-striped table-sm">
+    <thead>
+      <tr>
+        {% for h in log_entries[0].keys() %}
+        <th>{{ h }}</th>
+        {% endfor %}
+      </tr>
+    </thead>
+    <tbody>
+    {% for row in log_entries %}
+      <tr>
+        {% for val in row.values() %}
+        <td>{{ val }}</td>
+        {% endfor %}
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% else %}
+<p>No uploads yet.</p>
+{% endif %}
 <a href="{{ url_for('admin_logout') }}" class="btn btn-link mt-3">Logout</a>
 {% endblock %}
