@@ -109,14 +109,24 @@ select#categoryFilter {
   min-width: 200px;
 }
 
+[data-theme="light"] #uploadForm,
 #uploadForm {
-  background-color: var(--light-card);
+  background-color: #f2f2f2;
   box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+  width: 50%;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 [data-theme="dark"] #uploadForm {
   background-color: var(--dark-card);
   box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.5);
+}
+
+@media (max-width: 768px) {
+  #uploadForm {
+    width: 100%;
+  }
 }
 
 .upload-note {
