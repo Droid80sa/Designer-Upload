@@ -208,7 +208,7 @@ def send_notification(designer_email, name, email, contact, instructions, files,
         recipients=[designer_email]
     )
     file_paths = [
-        os.path.join(Config.FILE_SERVER_PATH, f) for f in files
+        os.path.join(app.config['FILE_SERVER_PATH'], f) for f in files
     ]
 
     body = f"""
