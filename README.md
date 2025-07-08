@@ -46,6 +46,21 @@ MAIL_PASSWORD=your_password
 
 The `docker-compose.yml` file and `config.py` load these variables when running locally.
 
+### Docker Volumes
+
+`docker-compose.yml` mounts a `designer_data` directory so designer avatars and
+`designers.json` remain available between container restarts:
+
+```yaml
+volumes:
+  - ./designer_data:/app/static/images/designers
+  - ./designer_data/designers.json:/app/designers.json
+```
+
+Create this folder next to `docker-compose.yml` before running `docker compose up`.
+Any avatars uploaded through the admin dashboard will then persist even if the container is rebuilt or restarted.
+
+
 ## 🧪 Running Tests
 
 Install the dependencies and run the test suite with **pytest**:
