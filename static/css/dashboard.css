@@ -109,6 +109,14 @@ select#categoryFilter {
   min-width: 200px;
 }
 
+#uploadForm {
+  background-color: var(--light-card);
+}
+
+[data-theme="dark"] #uploadForm {
+  background-color: var(--dark-card);
+}
+
 @media (max-width: 576px) {
   .navbar .text-center {
     flex-direction: column;
