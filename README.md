@@ -32,3 +32,16 @@ A simple, styled file uploader built in Flask to route design files directly to 
 ```bash
 git clone https://github.com/Droid80sa/Designer-Upload.git
 cd Designer-Upload
+```
+
+### 🔑 Environment Variables
+
+Create a `.env` file with:
+
+```bash
+SECRET_KEY=supersecret
+MAIL_USERNAME=proofs@hotink.co.za
+MAIL_PASSWORD=your_password
+```
+
+The `docker-compose.yml` file and `config.py` load these variables when running locally.
