@@ -47,8 +47,8 @@ FILE_SERVER_PATH=NAS/_Temp Work/ClientFiles
 
 The `docker-compose.yml` file and `config.py` load these variables when running
 locally. `FILE_SERVER_PATH` points to the directory on your server where
-uploads are stored. This path is included in the notification email so the
-designer knows exactly where to retrieve the files.
+uploads are stored. This value determines the **Location on server** shown in
+notification emails so designers know exactly where to retrieve the files.
 
 ### Docker Volumes
 
