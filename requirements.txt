@@ -1,3 +1,3 @@
-Flask
-Flask-Mail
-pandas
+Flask==2.2.5
+Flask-Mail==0.9.1
+pandas==2.2.2
