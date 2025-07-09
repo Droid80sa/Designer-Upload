@@ -114,7 +114,10 @@ def upload_files():
 
     uploaded_files = []  # list of saved unique filenames
     original_files = []  # keep originals for reference if needed
-    files = request.files.getlist('file')
+    files = request.files.getlist('file') or request.files.getlist('file[]')
+
+    # Ensure upload folder exists before saving files
+    os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
 
     for file in files:
         if file.filename != "":
