@@ -36,19 +36,24 @@ cd Designer-Upload
 
 ### 🔑 Environment Variables
 
-Create a `.env` file with:
+Uploads are written to `/mnt/nas_uploads`. This folder may simply be a symlink
+to the actual NAS location so the container can mount it consistently. Set
+`FILE_SERVER_PATH` to the real path you want displayed in notification emails
+(for example `NAS/_Temp Work/ClientFiles`). This value appears under
+**Location on server** in the designer email so they know where the files live.
+
+Create a `.env` file similar to:
 
 ```bash
 SECRET_KEY=supersecret
 MAIL_USERNAME=proofs@hotink.co.za
 MAIL_PASSWORD=your_password
+# Path shown in emails
 FILE_SERVER_PATH=NAS/_Temp Work/ClientFiles
 ```
 
 The `docker-compose.yml` file and `config.py` load these variables when running
-locally. `FILE_SERVER_PATH` points to the directory on your server where
-uploads are stored. This value determines the **Location on server** shown in
-notification emails so designers know exactly where to retrieve the files.
+locally.
 
 ### Docker Volumes
 
