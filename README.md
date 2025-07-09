@@ -11,7 +11,9 @@ A simple, styled file uploader built in Flask to route design files directly to 
 - 🗂️ Upload log saved as CSV for tracking
 - 📁 Files stored on `/mnt/nas_uploads` (or mounted volume)
 - 🎨 Full-page upload interface with themed progress bar
+- 🌙 User-facing dark mode toggle
 - 🧠 Configurable via `config.py` or Docker environment
+- 👀 Upload log viewer in the admin dashboard
 
 ---
 
