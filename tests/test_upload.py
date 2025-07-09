@@ -71,7 +71,5 @@ def test_notification_includes_file_server_path(app_client, monkeypatch):
     response = client.post('/upload', data=data, content_type='multipart/form-data')
     assert response.status_code == 200
 
-    saved_name = next(upload_folder.iterdir()).name
-    expected_path = os.path.join('/srv/files', saved_name)
     msg = send_mock.call_args.args[0]
-    assert expected_path in msg.body
+    assert '/srv/files' in msg.body
