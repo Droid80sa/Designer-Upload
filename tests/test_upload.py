@@ -54,8 +54,8 @@ def test_designer_avatars_in_template(app_client):
             assert avatar_url in html
 
 
-def test_notification_includes_file_server_path(app_client, monkeypatch):
-    client, send_mock, _, upload_folder = app_client
+def test_notification_includes_file_server_path(app_client):
+    client, send_mock, _, _ = app_client
 
     app.config['FILE_SERVER_PATH'] = '/srv/files'
 
@@ -72,4 +72,4 @@ def test_notification_includes_file_server_path(app_client, monkeypatch):
     assert response.status_code == 200
 
     msg = send_mock.call_args.args[0]
-    assert '/srv/files' in msg.body
+    assert msg.body.strip().endswith('/srv/files')
