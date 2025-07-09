@@ -3,6 +3,7 @@ import json
 import csv
 import fcntl
 import re
+import logging
 from functools import wraps
 from flask import (
     Flask,
@@ -116,26 +117,41 @@ def upload_files():
     original_files = []  # keep originals for reference if needed
     files = request.files.getlist('file') or request.files.getlist('file[]')
 
+    # Debug: log what files Flask received
+    logging.info(f"Received files: {[f.filename for f in files]}")
+
     # Ensure upload folder exists before saving files
     os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
 
+    logging.info(f"request.files keys: {list(request.files.keys())}")
+    logging.info(f"Form keys: {list(request.form.keys())}")
+    logging.info(f"Files received:")
     for file in files:
+        logging.info(f"Processing file: {file.filename}")
         if file.filename != "":
             if not allowed_file(file.filename):
+                logging.warning(f"File '{file.filename}' rejected: invalid type.")
                 return jsonify({"error": "invalid file type"}), 400
 
             file.seek(0, os.SEEK_END)
             size = file.tell()
             file.seek(0)
+
             if size > MAX_FILE_SIZE:
+                logging.warning(f"File '{file.filename}' rejected: too large.")
                 return jsonify({"error": "file too large"}), 400
 
             original_name = secure_filename(file.filename)
-            unique_name = f"{uuid.uuid4().hex}_{original_name}"
+            designer_tag = (designer_name or "design")[:3].lower()
+            short_uuid = uuid.uuid4().hex[:4]
+            unique_name = f"{designer_tag}_{short_uuid}_{original_name}"
             save_path = os.path.join(app.config['UPLOAD_FOLDER'], unique_name)
             file.save(save_path)
             uploaded_files.append(unique_name)
             original_files.append(original_name)
+            logging.info(f"Saved file as: {save_path}")
+
+    logging.info(f"Files saved: {uploaded_files}")
 
     # Log upload
     log_upload(
@@ -147,7 +163,7 @@ def upload_files():
         uploaded_files
     )
 
-    # Send email
+    # Send email (pass original_files for user clarity)
     send_notification(
         designer_email,
         client_name,
@@ -161,7 +177,6 @@ def upload_files():
     return jsonify({"message": "success"})
 
 def log_upload(designer, name, email, contact, instructions, files):
-    """Append an upload entry to the CSV log with file locking."""
     log_file = app.config['CSV_LOG']
     row = {
         "Date": datetime.now().isoformat(),
@@ -170,7 +185,7 @@ def log_upload(designer, name, email, contact, instructions, files):
         "Email": email,
         "Contact": contact,
         "Instructions": instructions,
-        "Files": ", ".join(files),
+        "Files": "\n".join(f"– {name}" for name in files),
     }
 
     # Ensure the directory for the log exists
@@ -205,29 +220,31 @@ def log_upload(designer, name, email, contact, instructions, files):
         csvfile.flush()
         fcntl.flock(csvfile, fcntl.LOCK_UN)
 
-def send_notification(designer_email, name, email, contact, instructions, files, originals):
+def send_notification(designer_email, client_name, client_email, contact, instructions, uploaded_files, original_files):
     msg = Message(
-        subject=f"New Artwork Upload from {name}",
-        recipients=[designer_email]
+    subject=f"New Artwork Upload from {client_name}",
+    recipients=[designer_email]
     )
-    location = app.config['FILE_SERVER_PATH']
+    msg.reply_to = client_email
+    
+    file_list = "\n".join(f"– {name}" for name in uploaded_files) if uploaded_files else "No files uploaded."
 
     body = f"""
-New artwork uploaded:
+A new design upload has been submitted.
 
-Client Name: {name}
-Email: {email}
+Client Name: {client_name}
+Client Email: {client_email}
 Contact: {contact}
 Instructions: {instructions}
 
-Files:
-{chr(10).join(originals)}
+Files Uploaded:
+{file_list}
 
-Location on server:
-{location}
+Location on server: {os.environ.get('FILE_SERVER_PATH', 'NAS/_Temp Work/ClientFiles')}
 """
     msg.body = body
     mail.send(msg)
+    logging.info(f"Email sent to: {designer_email}")
 
 
 @app.route('/admin/login', methods=['GET', 'POST'])
@@ -290,6 +307,27 @@ def upload_avatar():
     save_designers(DESIGNERS)
     return redirect(url_for('admin'))
 
+@app.route('/upload-test', methods=['GET', 'POST'])
+def upload_test():
+    if request.method == 'POST':
+        for f in request.files.values():
+            print("Received file:", f.filename)
+            save_path = os.path.join(app.config['UPLOAD_FOLDER'], secure_filename(f.filename))
+            f.save(save_path)
+        return "Upload received"
+
+    return '''
+    <form method="POST" enctype="multipart/form-data">
+      <input type="file" name="file" multiple>
+      <button type="submit">Test Upload</button>
+    </form>
+    '''
+@app.route("/email-test")
+def email_test():
+    msg = Message("Test Subject", recipients=["your_email@example.com"])
+    msg.body = "Test email from Flask app"
+    mail.send(msg)
+    return "Test email sent"
 
 @app.route('/admin/theme', methods=['POST'])
 @login_required
